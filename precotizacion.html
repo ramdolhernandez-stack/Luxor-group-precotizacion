@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Cotización — Luxor Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#1F4E79;
+    --brand-2:#2E75B6;
+    --tint:#EAF3FB;
+    --tint-2:#F4F8FC;
+    --ink:#1c2733;
+    --muted:#6b7785;
+    --line:#d8e0e8;
+    --line-strong:#b9c6d3;
+    --ok:#2E6B3E;
+    --warn:#9C5400;
+    --bg:#eef2f6;
+    --paper:#ffffff;
+    --radius:10px;
+    --accent:#E8772E;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{
+    max-width:960px;
+    margin:24px auto;
+    background:var(--paper);
+    border-radius:14px;
+    box-shadow:0 6px 28px rgba(20,40,70,.10);
+    overflow:hidden;
+  }
+
+  /* ---- Top bar ---- */
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+    padding:14px 22px;background:var(--tint);border-bottom:1px solid var(--line);
+  }
+  .toolbar .hint{font-size:13px;color:var(--muted);}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;}
+  button{
+    font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+    border-radius:8px;padding:9px 16px;border:1px solid transparent;transition:.15s;
+  }
+  .btn-primary{background:var(--brand);color:#fff;}
+  .btn-primary:hover{background:#163a5c;}
+  .btn-ghost{background:#fff;color:var(--brand);border-color:var(--line-strong);}
+  .btn-ghost:hover{background:var(--tint-2);}
+
+  /* ---- Aviso referencial ---- */
+  .aviso{
+    margin:0;padding:11px 22px;
+    background:#FFF8F3;
+    border-bottom:1px solid #f0d9c8;
+    font-size:13px;color:#7a4010;
+    display:flex;align-items:center;gap:8px;
+  }
+  .aviso b{font-weight:700;}
+
+  /* ---- Banner carga ---- */
+  .status-bar{
+    font-size:12.5px;padding:8px 22px;
+    background:#f0f6ff;border-bottom:1px solid var(--line);
+    color:var(--muted);display:flex;align-items:center;gap:6px;
+  }
+  .status-bar.ok{background:#f0faf4;color:#2E6B3E;}
+  .status-bar.err{background:#fff5f5;color:#b23b3b;}
+  .spinner{
+    width:12px;height:12px;border:2px solid var(--line);
+    border-top-color:var(--brand-2);border-radius:50%;
+    animation:spin .7s linear infinite;display:inline-block;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---- Documento ---- */
+  .doc{padding:30px 38px 40px;}
+  .head{
+    display:flex;justify-content:space-between;gap:24px;align-items:flex-start;
+    padding-bottom:18px;border-bottom:3px solid var(--brand);
+  }
+  .brand-block{display:flex;gap:16px;align-items:center;}
+  .logo-box{flex:0 0 auto;}
+  .logo-svg{height:74px;width:auto;display:block;}
+  .company .name{font-family:'Fraunces',serif;font-weight:600;font-size:24px;color:var(--brand);letter-spacing:.2px;}
+  .company .sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .doc-meta{text-align:right;font-size:13px;min-width:200px;}
+  .doc-title{
+    font-family:'Fraunces',serif;font-size:24px;color:var(--ink);
+    font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  }
+  .doc-subtitle{font-size:12px;color:var(--accent);font-weight:600;margin-top:3px;letter-spacing:.3px;}
+  .meta-row{display:flex;justify-content:flex-end;gap:8px;align-items:center;margin-top:8px;}
+  .meta-row label{color:var(--muted);font-size:12px;}
+  .meta-row input{width:140px;}
+
+  /* ---- Inputs ---- */
+  input,select,textarea{
+    font-family:inherit;font-size:13.5px;color:var(--ink);
+    border:1px solid var(--line);border-radius:6px;padding:7px 9px;background:#fff;width:100%;
+  }
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--brand-2);outline-offset:-1px;border-color:var(--brand-2);}
+  input::placeholder,textarea::placeholder{color:#aab4be;}
+  input[readonly]{background:var(--tint-2);color:var(--muted);cursor:default;}
+
+  .section{margin-top:26px;}
+  .section-title{
+    font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--brand);
+    display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  }
+  .section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  .grid{display:grid;gap:12px 18px;}
+  .grid.cliente{grid-template-columns:1.4fr 1fr 1fr;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field.full{grid-column:1 / -1;}
+  .field label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+
+  /* ---- Tabla ítems ---- */
+  .items-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:13px;}
+  thead th{
+    background:var(--brand);color:#fff;font-weight:600;font-size:11.5px;letter-spacing:.3px;
+    text-transform:uppercase;padding:10px 8px;text-align:left;white-space:nowrap;
+  }
+  tbody td{padding:6px 7px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tbody tr:nth-child(even){background:var(--tint-2);}
+  tbody td input,tbody td select{padding:6px 7px;font-size:13px;}
+  td.num input{text-align:right;}
+  td.calc{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink);white-space:nowrap;}
+  td.center{text-align:center;}
+  .row-del{
+    border:none;background:transparent;color:#c0504d;font-size:18px;line-height:1;
+    padding:2px 6px;border-radius:6px;cursor:pointer;
+  }
+  .row-del:hover{background:#fbe9e9;}
+  .add-row{margin-top:12px;}
+  .add-row button{
+    background:var(--tint);color:var(--brand);border:1px dashed var(--brand-2);
+    width:100%;padding:11px;
+  }
+  .add-row button:hover{background:#dfecf8;}
+
+  .col-amb{width:160px;}
+  .col-prod{width:170px;}
+  .col-dim{width:80px;}
+  .col-m2{width:70px;}
+  .col-precio{width:130px;}
+  .col-sub{width:130px;}
+  .col-x{width:34px;}
+
+  /* ---- Totales ---- */
+  .bottom{display:flex;justify-content:flex-end;margin-top:24px;}
+  .totals{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;min-width:320px;}
+  .totals .t-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 16px;font-size:14px;border-bottom:1px solid var(--line);
+  }
+  .totals .t-row:last-child{border-bottom:none;}
+  .totals .t-row span:first-child{color:var(--muted);}
+  .totals .t-val{font-variant-numeric:tabular-nums;font-weight:600;}
+  .totals .grand{background:var(--brand);color:#fff;padding:14px 16px;}
+  .totals .grand span:first-child{
+    color:#cfe0f1;font-weight:600;text-transform:uppercase;
+    letter-spacing:.5px;font-size:13px;
+  }
+  .totals .grand .t-val{font-size:20px;color:#fff;}
+
+  .obs-section{margin-top:24px;}
+  .obs-section textarea{min-height:60px;resize:vertical;}
+
+  .signoff{margin-top:40px;}
+  .sign-line{
+    border-top:1.5px solid var(--ink);padding-top:6px;
+    text-align:center;font-size:12.5px;color:var(--muted);
+  }
+
+  .footer-note{
+    margin-top:30px;font-size:11.5px;color:var(--muted);
+    text-align:center;border-top:1px solid var(--line);padding-top:14px;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width:760px){
+    .doc{padding:22px 18px 30px;}
+    .head{flex-direction:column;}
+    .doc-meta{text-align:left;}
+    .meta-row{justify-content:flex-start;}
+    .grid.cliente{grid-template-columns:1fr;}
+    .bottom{flex-direction:column;}
+    .totals{min-width:0;width:100%;}
+  }
+
+  /* ---- Impresión ---- */
+  @media print{
+    body{background:#fff;font-size:12px;}
+    .toolbar,.aviso,.status-bar{display:none !important;}
+    .sheet{box-shadow:none;margin:0;max-width:100%;border-radius:0;}
+    .doc{padding:6mm 0 0;}
+    .head{padding-bottom:10px;}
+    .logo-svg{height:54px;}
+    .company .name{font-size:18px;}
+    .doc-title{font-size:20px;}
+    .section{margin-top:14px;}
+    .add-row,.row-del,.col-x{display:none !important;}
+    thead th{
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+      font-size:10px;padding:7px 6px;
+    }
+    tbody td{padding:4px 6px;font-size:11px;}
+    input,select,textarea{border:none;padding:2px 0;font-size:11px;}
+    table{min-width:0;}
+    .items-wrap{border:1px solid #bbb;overflow:visible;}
+    .grid.cliente{grid-template-columns:1.4fr 1fr 1fr;}
+    .field label{font-size:10px;}
+    /* Evitar cortes en secciones clave */
+    .bottom{page-break-inside:avoid;break-inside:avoid;margin-top:14px;}
+    .totals{page-break-inside:avoid;break-inside:avoid;}
+    .totals .grand{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .signoff{page-break-inside:avoid;break-inside:avoid;margin-top:24px;}
+    .footer-note{page-break-inside:avoid;break-inside:avoid;margin-top:16px;}
+    .obs-section{page-break-inside:avoid;break-inside:avoid;}
+    /* Encabezado de tabla se repite en cada página */
+    thead{display:table-header-group;}
+    tfoot{display:table-footer-group;}
+    @page{size:letter portrait;margin:14mm;}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <span class="hint">Ingresa las medidas de cada ambiente. El precio estimado se calcula automáticamente.</span>
+    <div class="btns">
+      <button class="btn-ghost" onclick="addRow()">+ Agregar ambiente</button>
+      <button class="btn-ghost" onclick="resetForm()">Limpiar</button>
+      <button class="btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+    </div>
+  </div>
+
+  <!-- AVISO REFERENCIAL -->
+  <div class="aviso">
+    ⚠️ <span><b>Estimación referencial · Sin IVA.</b> Los valores se calculan en base a las medidas ingresadas y precios por m² vigentes. El precio definitivo se confirma tras la visita técnica.</span>
+  </div>
+
+  <!-- STATUS BAR (carga de planilla) -->
+  <div class="status-bar" id="status-bar">
+    <span class="spinner" id="status-spinner"></span>
+    <span id="status-msg">Cargando lista de productos…</span>
+  </div>
+
+  <div class="doc">
+
+    <!-- ENCABEZADO -->
+    <div class="head">
+      <div class="brand-block">
+        <div class="logo-box">
+          <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 980 784"><path fill="white" d="M0 0L980 0L980 784L0 784L0 0Z"/><path fill="#20325D" d="M568.831 337.433C574.905 330.645 581.248 323.353 588.147 317.41C621.697 288.509 674.885 288.783 707.778 318.664C725.568 334.83 736.057 357.51 736.856 381.538C739.05 432.949 702.492 474.125 650.797 476.289C600.093 478.412 559.134 440.624 557.573 389.601C557.431 383.681 557.795 377.759 558.661 371.901C545.286 384.433 534.699 391.726 517.341 398.554C521.838 406.19 527.189 414.364 532.198 421.681C543.767 438.58 554.568 456.685 566.434 473.314L520.088 473.308C508.252 455.053 496.641 436.652 485.259 418.11L461.948 455.218C458.631 460.479 453.974 468.315 450.422 473.229C435.198 473.318 419.974 473.325 404.75 473.25L437.125 424.591C441.861 417.47 447.172 408.888 452.008 402.069C456.508 400.677 467.619 399.506 473.098 398.364C491.831 394.276 509.717 386.98 525.964 376.798C535.419 370.837 566.751 346.634 568.831 337.433Z"/><path fill="white" d="M625.303 331.871C633.275 327.857 641.16 327.257 649.831 327.238C656.069 327.564 664.597 329.176 670.019 332.387C675.199 334.226 682.656 339.651 686.276 343.781C687.754 345.237 689.108 346.534 690.444 348.135C695.544 354.514 698.462 359.996 701.107 367.803C701.434 369.125 702.378 372.576 702.435 373.761C704.545 382.267 703.714 391.72 702.206 400.268C699.488 409.507 695.488 419.342 688.275 426.058C685.196 429.757 678.246 435.984 673.79 437.741C665.999 443.209 651.814 445.964 642.43 444.77C637.882 444.541 633.698 443.329 629.37 442.06C625.361 440.375 623.064 439.568 619.323 437.248C614.845 434.76 609.092 430.024 605.851 426.057C605.051 425.535 603.834 423.881 603.164 423.066C596.413 414.519 592.985 405.903 591.032 395.282C589.846 388.676 590.217 381.711 591.233 375.11C593.94 361.218 601.368 347.903 612.931 339.506C614.644 337.11 622.393 333.12 625.303 331.871Z"/><defs><linearGradient id="g0" gradientUnits="userSpaceOnUse" x1="591.17621" y1="386.37704" x2="602.93591" y2="385.95706"><stop offset="0" stop-color="#876C43"/><stop offset="1" stop-color="#B79D6F"/></linearGradient></defs><path fill="url(#g0)" d="M625.303 331.871C626.716 331.707 628.055 331.611 629.42 331.19C629.912 331.855 629.802 332.747 629.888 333.739L630.417 333.696C631.624 331.894 632.94 330.285 635.199 329.939C637.051 331.732 635.276 335.256 636.395 337.036L636.802 337.269C631.105 339.176 627.416 340.432 622.128 343.477L621.725 343.864C618.912 346.531 615.017 348.82 612.455 351.833C597.945 368.894 595.813 390.127 605.704 410.017L604.772 411.586C603.716 411.386 604.217 411.525 603.273 410.268L603.716 410.547L603.105 410.434C603.107 412.937 602.757 421.442 603.164 423.066C596.413 414.519 592.985 405.903 591.032 395.282C589.846 388.676 590.217 381.711 591.233 375.11C593.94 361.218 601.368 347.903 612.931 339.506C614.644 337.11 622.393 333.12 625.303 331.871Z"/><path fill="#20325D" d="M751.082 299.521L795.14 299.525C810.395 299.519 826.067 298.351 840.869 302.112C874.405 310.632 888.676 342.923 879.747 374.999C875.432 390.498 865.417 400.237 851.754 407.82C863.582 429.741 875.57 451.577 887.716 473.324L858.396 473.306L843.008 473.263C832.672 453.77 822.498 434.192 812.486 414.531L790.576 414.511L790.545 473.351L751.073 473.311L751.082 299.521Z"/><path fill="white" d="M790.592 332.703L807.623 332.603C817.727 332.557 826.809 331.849 834.978 339.12C839.719 343.339 841.829 349.454 841.96 355.685C842.12 363.264 840.523 368.559 835.415 374.088C824.394 382.999 805.167 380.476 790.568 380.355L790.592 332.703Z"/><path fill="#5B5B5B" d="M83.6091 344.081C84.6763 343.211 85.972 342.087 86.998 341.198C147.234 289.014 219.645 282.521 291.305 315.097C308.562 322.943 324.069 331.413 340.977 340.302C377.097 359.292 412.727 374.76 453.867 378.031C486.778 380.898 519.693 372.576 547.29 354.413C555.134 349.197 561.696 343.521 568.831 337.433C566.751 346.634 535.419 370.837 525.964 376.798C509.717 386.98 491.831 394.276 473.098 398.364C467.619 399.506 456.508 400.677 452.008 402.069C444.343 402.424 435.793 402.797 428.174 402.155C386.839 398.667 347.808 380.009 311.698 360.702C288.288 348.186 265.493 335.99 239.935 328.331C183.738 311.491 135.174 317.066 83.6091 344.081Z"/><path fill="#20325D" d="M251.782 343.11C261.633 346.027 281.423 355.121 290.912 360.374L290.863 390.567C290.84 407.818 289.397 429.71 308.195 438.171C319.071 443.066 334.71 441.91 343.279 433.012C353.768 422.121 352.469 405.069 352.492 391.067C364.295 395.922 379.142 401.751 391.555 404.848C391.517 412.071 391.073 417.141 389.9 424.255C382.738 458.481 357.497 475.872 323.301 476.285C303.972 476.518 284.399 471.507 270.323 457.388C249.89 436.893 251.659 410.394 251.698 383.924L251.782 343.11Z"/><path fill="#20325D" d="M163.961 328.533L165.801 328.44C166.638 329.522 166.851 330.361 166.797 331.859C166.435 342.024 166.581 352.352 166.578 362.531L166.621 438.802L237.438 438.714L237.457 473.325L201.694 473.307L127.365 473.282L127.355 335.848C139.345 332.23 151.554 330.057 163.961 328.533Z"/><path fill="#20325D" d="M519.486 299.547L564.505 299.503C562.046 302.987 559.543 306.859 557.149 310.42C552.177 317.994 530.649 352.883 525.358 356.436C521.719 358.88 517.239 360.28 513.103 361.669C494.447 367.932 471.589 372.026 452.029 368.371C436.803 346.81 420.946 321.739 406.392 299.526L451.733 299.556C463.143 317.079 474.182 335.023 485.426 352.684C495.93 335.805 508.314 315.784 519.486 299.547Z"/></svg>
+        </div>
+        <div class="company">
+          <div class="name">Luxor Group SpA</div>
+          <div class="sub">Cortinas roller · Fabricación a medida</div>
+          <div class="sub">ventas@luxorgroupcl.com</div>
+        </div>
+      </div>
+      <div class="doc-meta">
+        <div class="doc-title">Pre-Cotización</div>
+        <div class="doc-subtitle">Estimación referencial · Sin IVA</div>
+        <div class="meta-row"><label>Fecha</label><input id="fecha" type="date"></div>
+      </div>
+    </div>
+
+    <!-- DATOS DEL CLIENTE -->
+    <div class="section">
+      <div class="section-title">Datos del cliente</div>
+      <div class="grid cliente">
+        <div class="field"><label>Nombre / Razón social</label><input id="cli-nombre" placeholder="Nombre completo"></div>
+        <div class="field"><label>RUT</label><input id="cli-rut" placeholder="12.345.678-9"></div>
+        <div class="field"><label>Teléfono</label><input id="cli-tel" placeholder="+56 9 ...."></div>
+        <div class="field"><label>Correo electrónico</label><input id="cli-mail" placeholder="correo@ejemplo.cl"></div>
+        <div class="field"><label>Dirección</label><input id="cli-dir" placeholder="Calle, número"></div>
+        <div class="field"><label>Comuna / Ciudad</label><input id="cli-comuna" placeholder="Comuna"></div>
+      </div>
+    </div>
+
+    <!-- ÍTEMS -->
+    <div class="section">
+      <div class="section-title">Detalle de productos</div>
+      <div class="items-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-amb">Ambiente / Ubicación</th>
+              <th class="col-prod">Producto</th>
+              <th class="col-dim">Ancho (m)</th>
+              <th class="col-dim">Alto (m)</th>
+              <th class="col-m2">m²</th>
+              <th class="col-sub">Subtotal (CLP)</th>
+              <th class="col-x"></th>
+            </tr>
+          </thead>
+          <tbody id="items-body"></tbody>
+        </table>
+      </div>
+      <div class="add-row"><button onclick="addRow()">+ Agregar otro ambiente / producto</button></div>
+    </div>
+
+    <!-- TOTAL -->
+    <div class="bottom">
+      <div>
+        <div class="totals">
+          <div class="t-row">
+            <span>Total estimado</span>
+            <span class="t-val" id="t-total">$0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSERVACIONES -->
+    <div class="obs-section section">
+      <div class="section-title">Observaciones</div>
+      <div class="field">
+        <textarea id="obs" placeholder="Consultas o comentarios adicionales del cliente…"></textarea>
+      </div>
+    </div>
+
+    <!-- FIRMA -->
+    <div class="signoff" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px;">
+      <div class="sign-line">Firma Luxor Group SpA</div>
+      <div class="sign-line">Nombre y firma del cliente</div>
+    </div>
+
+    <div class="footer-note">
+      Valores en pesos chilenos (CLP) · Esta pre-cotización es de carácter referencial y no constituye un compromiso de precio.
+      El valor definitivo se confirma mediante cotización formal tras la visita técnica de medición.
+    </div>
+
+  </div><!-- /doc -->
+</div><!-- /sheet -->
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — pega aquí la URL CSV de tu Google Sheets
+   ============================================================
+   Pasos:
+   1. Abre tu planilla en Google Sheets
+   2. Archivo → Compartir → Publicar en la web
+   3. Selecciona la hoja, formato CSV → Publicar
+   4. Copia el enlace y pégalo como valor de SHEETS_CSV_URL
+
+   Columnas esperadas (fila 1 = encabezado):
+     A: Producto    B: Precio_m2
+   ============================================================ */
+const SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7ZEf0x4psvyQUMqK1MjA1_kg0kA84N7pQcF7qr9aPfnyWBSv0ZNNbtQEMFs1LfNulpoUYEZp3MH7J/pub?gid=0&single=true&output=csv";
+
+/* Valores de respaldo (se usan si no hay URL o hay error de red) */
+const FALLBACK = [
+  { nombre: "Roller Simple",     precio: 28500 },
+  { nombre: "Roller Doble",      precio: 41500 },
+  { nombre: "Roller Duo",        precio: 37000 },
+  { nombre: "Cortina Vertical",  precio: 56000 },
+];
+
+/* ---- Estado global de productos ---- */
+let productos = [];
+
+/* ---- Carga de productos ---- */
+async function cargarProductos() {
+  const bar  = document.getElementById("status-bar");
+  const msg  = document.getElementById("status-msg");
+  const spin = document.getElementById("status-spinner");
+
+  if (!SHEETS_CSV_URL) {
+    productos = FALLBACK;
+    bar.className  = "status-bar ok";
+    spin.style.display = "none";
+    msg.textContent = "✓ Usando lista de productos predeterminada (sin planilla configurada)";
+    return;
+  }
+
+  try {
+    const r = await fetch(SHEETS_CSV_URL);
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const txt = await r.text();
+    const filas = txt.trim().split("\n").slice(1); // saltar encabezado
+    const parsed = filas
+      .map(l => {
+        const cols = l.split(",");
+        return { nombre: (cols[0]||"").replace(/"/g,"").trim(), precio: parseFloat((cols[1]||"0").replace(/"/g,"")) || 0 };
+      })
+      .filter(p => p.nombre && p.precio > 0);
+
+    if (!parsed.length) throw new Error("Planilla vacía o formato incorrecto");
+
+    productos = parsed;
+    bar.className  = "status-bar ok";
+    spin.style.display = "none";
+    msg.textContent = `✓ ${productos.length} productos cargados desde la planilla`;
+  } catch (e) {
+    productos = FALLBACK;
+    bar.className  = "status-bar err";
+    spin.style.display = "none";
+    msg.textContent = `⚠ No se pudo cargar la planilla (${e.message}). Usando valores predeterminados.`;
+  }
+
+  // Actualizar todos los selects ya existentes
+  document.querySelectorAll(".prod-select").forEach(sel => {
+    const val = sel.value;
+    poblarSelect(sel);
+    sel.value = val;
+  });
+  recalc();
+}
+
+function poblarSelect(sel) {
+  sel.innerHTML = productos.map(p =>
+    `<option value="${p.precio}">${p.nombre}</option>`
+  ).join("");
+}
+
+/* ---- Filas de la tabla ---- */
+function addRow() {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td class="col-amb"><input type="text" placeholder="Ej: Living"></td>
+    <td class="col-prod"><select class="prod-select"></select></td>
+    <td class="col-dim num"><input class="ancho" type="number" min="0" step="0.01" placeholder="0,00"></td>
+    <td class="col-dim num"><input class="alto"  type="number" min="0" step="0.01" placeholder="0,00"></td>
+    <td class="col-m2 calc m2">0,00</td>
+    <td class="col-sub calc sub">$0</td>
+    <td class="col-x center"><button class="row-del" title="Eliminar" onclick="delRow(this)">×</button></td>
+  `;
+  document.getElementById("items-body").appendChild(tr);
+
+  const sel = tr.querySelector(".prod-select");
+  poblarSelect(sel);
+  sel.addEventListener("change", recalc);
+  tr.querySelectorAll(".ancho,.alto").forEach(inp => inp.addEventListener("input", recalc));
+  recalc();
+}
+
+function delRow(btn) {
+  const body = document.getElementById("items-body");
+  btn.closest("tr").remove();
+  if (!body.children.length) addRow();
+  recalc();
+}
+
+/* ---- Cálculo ---- */
+const fmt = n => "$" + (Math.round(n) || 0).toLocaleString("es-CL");
+
+function recalc() {
+  let total = 0;
+  document.querySelectorAll("#items-body tr").forEach(tr => {
+    const ancho  = parseFloat(tr.querySelector(".ancho").value) || 0;
+    const alto   = parseFloat(tr.querySelector(".alto").value)  || 0;
+    const precio = parseFloat(tr.querySelector(".prod-select").value) || 0;
+    const m2     = ancho * alto;
+    const sub    = m2 * precio;
+    tr.querySelector(".m2").textContent  = m2.toLocaleString("es-CL", { minimumFractionDigits:2, maximumFractionDigits:2 });
+    tr.querySelector(".sub").textContent = fmt(sub);
+    total += sub;
+  });
+  document.getElementById("t-total").textContent = fmt(total);
+}
+
+/* ---- Reset ---- */
+function resetForm() {
+  if (!confirm("¿Limpiar todos los datos del formulario?")) return;
+  document.querySelectorAll("input:not([type=date]), textarea").forEach(el => el.value = "");
+  document.getElementById("items-body").innerHTML = "";
+  addRow(); addRow();
+  recalc();
+}
+
+/* ---- Fecha de hoy ---- */
+document.getElementById("fecha").value = new Date().toISOString().slice(0, 10);
+
+/* ---- Arranque ---- */
+cargarProductos().then(() => {
+  addRow();
+  addRow();
+});
+</script>
+</body>
+</html>
